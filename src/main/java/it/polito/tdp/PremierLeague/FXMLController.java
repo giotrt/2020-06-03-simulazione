@@ -5,9 +5,12 @@
 package it.polito.tdp.PremierLeague;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.PremierLeague.model.Model;
+import it.polito.tdp.PremierLeague.model.Player;
+import it.polito.tdp.PremierLeague.model.PlayerDelta;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -44,16 +47,65 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	
+    	txtResult.clear();
+    	
+    	String m = txtGoals.getText();
+    	try {
+    		double media = Double.parseDouble(m);
+        	txtResult.appendText(model.creaGrafo(media));
 
+    	}catch(NumberFormatException e) {
+    		txtResult.appendText("Inserire un numero decimale valido minore di uno");
+    		return;
+    	}
     }
 
     @FXML
     void doDreamTeam(ActionEvent event) {
+    	
+    	txtResult.clear();
+    	
+    	if(!model.isCreato()) {
+    		txtResult.appendText("Creare prima il grafo");
+    		return;
+    	}
+    	
+    	String k = txtK.getText();
+    	try {
+    		int kScelto = Integer.parseInt(k);
+    		List<Player> best = model.cercaDreamTeam(kScelto);
+    		for(Player p : best) {
+    			txtResult.appendText(p.toString()+"\n");
+    		}
+    		txtResult.appendText("GRADO: " +model.getMaxGrado()+"\n");
+    		
+    	}catch(NumberFormatException e) {
+    		txtResult.appendText("Inserire un numero intero minore di cinque");
+    		return;
+    	}
 
     }
 
     @FXML
     void doTopPlayer(ActionEvent event) {
+    	
+    	txtResult.clear();
+    	
+    	if(!model.isCreato()) {
+    		txtResult.appendText("Creare prima il grafo");
+    		return;
+    	}
+    	
+    	List<PlayerDelta> top = model.getGiocatoreMigliore();
+    	
+    	txtResult.appendText("TOP PLAYER: " + top.get(0).getP1().toString()+"\n"+"\n");
+    	txtResult.appendText("AVVERSARI BATTUTI:" +"\n");
+    	List<PlayerDelta> avversari = model.getAvversariBattuti(top.get(0).getP1());
+    	for(PlayerDelta p : avversari) {
+    		txtResult.appendText(p.getP1() + " | " + p.getDelta() + "\n");
+    	}
+    	
 
     }
 
